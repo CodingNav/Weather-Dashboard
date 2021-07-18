@@ -1,0 +1,11 @@
+
+/* BANNER CSS */
+.banner {
+    text-align: center;
+    background-image: linear-gradient(#8c8cd2, #bbbbd0);
+    font-size: 32px;
+}
+
+.row .banner {
+    padding: 24px;
+}
