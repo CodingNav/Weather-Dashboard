@@ -11,20 +11,35 @@ var uvDisplay = document.querySelector("#uv-index");
 var cardRow = document.querySelector("#card");
 
 var cityInput = document.querySelector("#city");
+var errorMessage = document.querySelector("#error-message");
 var searchBtn = document.querySelector("#search-btn");
 var historyDisplay = document.querySelector("#search-history");
 var cityList = [];
 
+errorMessage.style.display = "none";
+
 // https://api.openweathermap.org/data/2.5/weather?q=orlando&appid=4383960b162385ee11decc2446137670
 
-function searchWeather(city) {
+function searchWeather(city, addToHistory) {
     var queryURL = "http://api.openweathermap.org/data/2.5/weather?units=imperial&q=" + city + "&appid=" + APIKey;
 
     fetch(queryURL)
         .then(function (response) {
+            if (response.ok == false) {
+                throw "Failed";
+            }
             return response.json();
         })
         .then(function (data) {
+            if (addToHistory == true) {
+                if (localStorage.getItem("city") != null) {
+                    cityList = JSON.parse(localStorage.getItem("city"));
+                }
+                cityList.push(city);
+                localStorage.setItem("city", JSON.stringify(cityList));
+            
+                loadCities();
+            }
 
             var uvURL = "https://api.openweathermap.org/data/2.5/onecall?units=imperial&lat=" + data.coord.lat + "&lon=" + data.coord.lon + "&appid=" + APIKey;
             fetch(uvURL)
@@ -57,6 +72,9 @@ function searchWeather(city) {
             tempDisplay.innerHTML = data.main.temp;
             windDisplay.innerHTML = data.wind.speed;
             humidityDisplay.innerHTML = data.main.humidity;
+        })
+        .catch(function(err) {
+            errorMessage.style.display = "block";
         });
 }
 
@@ -72,15 +90,7 @@ function loadCities() {
 
 searchBtn.addEventListener('click', function () {
     var inputValue = cityInput.value;
-
-    if (localStorage.getItem("city") != null) {
-        cityList = JSON.parse(localStorage.getItem("city"));
-    }
-    cityList.push(inputValue);
-    localStorage.setItem("city", JSON.stringify(cityList));
-
-    loadCities();
-    searchWeather(inputValue);
+    searchWeather(inputValue, true);
 });
 
 historyDisplay.addEventListener('click', function(event){
