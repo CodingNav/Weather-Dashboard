@@ -51,7 +51,6 @@ function searchWeather(city) {
                     }
                 });
 
-
             cityDisplay.innerHTML = data.name;
             dateDisplay.innerHTML = data.dt;
             iconDisplay.src = 'http://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
@@ -82,6 +81,10 @@ searchBtn.addEventListener('click', function () {
 
     loadCities();
     searchWeather(inputValue);
+});
+
+historyDisplay.addEventListener('click', function(event){
+    searchWeather(event.target.textContent);   
 });
 
 loadCities();
