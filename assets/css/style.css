@@ -9,3 +9,8 @@
 .row .banner {
     padding: 24px;
 }
+
+/* CARD CSS */
+.row .col.s2 {
+    width: 20%;
+}
