@@ -11,8 +11,14 @@ var humidityDisplay = document.querySelector("#humidity");
 var uvDisplay = document.querySelector("#uv-index");
 var cardRow = document.querySelector("#card");
 
+var cityInput = document.querySelector("#city");
+var searchBtn = document.querySelector("#search-btn");
+var historyDisplay = document.querySelector("#search-history");
+var cityList = [];
+
 // https://api.openweathermap.org/data/2.5/weather?q=orlando&appid=4383960b162385ee11decc2446137670
 
+function searchWeather() {
 fetch(queryURL)
     .then(function (response) {
         return response.json();
@@ -43,7 +49,7 @@ fetch(queryURL)
                     </div> `;
                 }
                 
-            })
+            });
 
 
         cityDisplay.innerHTML = data.name;
@@ -54,3 +60,26 @@ fetch(queryURL)
         humidityDisplay.innerHTML = data.main.humidity;
     });
 
+}
+
+function loadCities() {
+    if (localStorage.getItem("city") !=null) {
+        cityList = JSON.parse(localStorage.getItem("city"));
+    }
+    historyDisplay.innerHTML = "";
+    for(i = 0; i < cityList.length; i++) {
+        historyDisplay.innerHTML += `<div class="col s12"><a class="waves-effect waves-light btn">${cityList[i]}</a></div>`;
+    }
+}
+
+searchBtn.addEventListener('click', function() {
+    var inputValue = cityInput.value;
+
+    if (localStorage.getItem("city") != null) {
+        cityList = JSON.parse(localStorage.getItem("city"));
+    }
+    cityList.push(inputValue);
+    localStorage.setItem("city", JSON.stringify(cityList));
+});
+
+loadCities();
