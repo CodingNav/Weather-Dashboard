@@ -1,5 +1,4 @@
 var APIKey = "4383960b162385ee11decc2446137670";
-var city = "new+york";
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?units=imperial&q=" + city + "&appid=" + APIKey;
 
 var cityDisplay = document.querySelector("#city-name");
@@ -18,25 +17,27 @@ var cityList = [];
 
 // https://api.openweathermap.org/data/2.5/weather?q=orlando&appid=4383960b162385ee11decc2446137670
 
-function searchWeather() {
-fetch(queryURL)
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
+function searchWeather(city) {
+    var queryURL = "http://api.openweathermap.org/data/2.5/weather?units=imperial&q=" + city + "&appid=" + APIKey;
 
-        var uvURL = "https://api.openweathermap.org/data/2.5/onecall?units=imperial&lat=" + data.coord.lat + "&lon=" + data.coord.lon + "&appid=" + APIKey;
-        fetch(uvURL)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data);
-                uvDisplay.innerHTML = data.current.uvi;
-                cardRow.innerHTML = "";
-                for (i = 1; i < 6; i++) {
-                    cardRow.innerHTML += 
-                    `<div class="col s2">
+    fetch(queryURL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+
+            var uvURL = "https://api.openweathermap.org/data/2.5/onecall?units=imperial&lat=" + data.coord.lat + "&lon=" + data.coord.lon + "&appid=" + APIKey;
+            fetch(uvURL)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data);
+                    uvDisplay.innerHTML = data.current.uvi;
+                    cardRow.innerHTML = "";
+                    for (i = 1; i < 6; i++) {
+                        cardRow.innerHTML +=
+                            `<div class="col s2">
                         <div class="card blue-grey darken-1">
                             <div class="card-content white-text">
                                 <h3 class="card-title">${data.daily[i].dt}</h3>
@@ -47,32 +48,30 @@ fetch(queryURL)
                             </div>
                         </div>
                     </div> `;
-                }
-                
-            });
+                    }
+                });
 
 
-        cityDisplay.innerHTML = data.name;
-        dateDisplay.innerHTML = data.dt;
-        iconDisplay.src = 'http://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
-        tempDisplay.innerHTML = data.main.temp;
-        windDisplay.innerHTML = data.wind.speed;
-        humidityDisplay.innerHTML = data.main.humidity;
-    });
-
+            cityDisplay.innerHTML = data.name;
+            dateDisplay.innerHTML = data.dt;
+            iconDisplay.src = 'http://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
+            tempDisplay.innerHTML = data.main.temp;
+            windDisplay.innerHTML = data.wind.speed;
+            humidityDisplay.innerHTML = data.main.humidity;
+        });
 }
 
 function loadCities() {
-    if (localStorage.getItem("city") !=null) {
+    if (localStorage.getItem("city") != null) {
         cityList = JSON.parse(localStorage.getItem("city"));
     }
     historyDisplay.innerHTML = "";
-    for(i = 0; i < cityList.length; i++) {
+    for (i = 0; i < cityList.length; i++) {
         historyDisplay.innerHTML += `<div class="col s12"><a class="waves-effect waves-light btn">${cityList[i]}</a></div>`;
     }
 }
 
-searchBtn.addEventListener('click', function() {
+searchBtn.addEventListener('click', function () {
     var inputValue = cityInput.value;
 
     if (localStorage.getItem("city") != null) {
@@ -80,6 +79,10 @@ searchBtn.addEventListener('click', function() {
     }
     cityList.push(inputValue);
     localStorage.setItem("city", JSON.stringify(cityList));
+
+    loadCities();
+    searchWeather(inputValue);
 });
 
 loadCities();
+searchWeather("new+york");
