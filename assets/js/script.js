@@ -52,6 +52,16 @@ function searchWeather(city, addToHistory) {
             .then(function (data) {
                 console.log(data);
                 uvDisplay.innerHTML = data.current.uvi;
+                if (data.current.uvi < 3) {
+                    uvDisplay.style.backgroundColor = "green";
+                }
+                else if (data.current.uvi < 8) {
+                    uvDisplay.style.backgroundColor = "yellow";
+                }
+                else {
+                    uvDisplay.style.backgroundColor = "red";
+                }
+
                 cardRow.innerHTML = "";
                 for (i = 1; i < 6; i++) {
                     cardRow.innerHTML +=
@@ -99,6 +109,9 @@ function loadCities() {
 searchBtn.addEventListener('click', function () {
     var inputValue = cityInput.value;
     searchWeather(inputValue, true);
+    cityInput.value = "";
+    errorMessage.style.display = "none";
+
 });
 
 historyDisplay.addEventListener('click', function(event){
